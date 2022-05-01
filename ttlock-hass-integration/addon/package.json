@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "patch-package"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kind3r/ttlock-hass-integration.git"
+    "url": "git+https://github.com/z-jack/ttlock-hass-addons.git"
   },
   "keywords": [
     "ttlock",
@@ -21,12 +22,12 @@
     "unofficial",
     "offline"
   ],
-  "author": "Emanuel Posescu <kind3r@gmail.com>",
+  "author": "JackZ <404@jackz.cn>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/kind3r/hass-addons/issues"
+    "url": "https://github.com/z-jack/ttlock-hass-addons/issues"
   },
-  "homepage": "https://github.com/kind3r/hass-addons/tree/master/ttlock-hass-integration",
+  "homepage": "https://github.com/z-jack/ttlock-hass-addons/tree/master/ttlock-hass-integration",
   "dependencies": {
     "async-mqtt": "^2.6.1",
     "express": "^4.17.1",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.9",
-    "@types/ws": "^7.4.0"
+    "@types/ws": "^7.4.0",
+    "patch-package": "^6.4.7"
   }
 }

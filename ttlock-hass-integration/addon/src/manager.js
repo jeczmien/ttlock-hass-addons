@@ -1,13 +1,19 @@
-'use strict';
+"use strict";
 
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 const store = require("./store");
-const { TTLockClient, AudioManage, LockedStatus, LogOperateCategory, LogOperateNames } = require("ttlock-sdk-js");
+const {
+  TTLockClient,
+  AudioManage,
+  LockedStatus,
+  LogOperateCategory,
+  LogOperateNames,
+} = require("ttlock-sdk-js");
 
 const ScanType = Object.freeze({
   NONE: 0,
   AUTOMATIC: 1,
-  MANUAL: 2
+  MANUAL: 2,
 });
 
 const SCAN_MAX = 3;
@@ -47,7 +53,7 @@ class Manager extends EventEmitter {
     /** @type {Set<string>} Locks found during scan that we need to connect to at least once to get their information */
     this.connectQueue = new Set();
     /** @type {'none'|'noble'} */
-    this.gateway = 'none';
+    this.gateway = "none";
     this.gateway_host = "";
     this.gateway_port = 0;
     this.gateway_key = "";
@@ -58,7 +64,7 @@ class Manager extends EventEmitter {
   async init() {
     if (typeof this.client == "undefined") {
       try {
-        let clientOptions = {}
+        let clientOptions = {};
 
         if (this.gateway == "noble") {
           clientOptions.scannerType = "noble-websocket";
@@ -67,8 +73,8 @@ class Manager extends EventEmitter {
             websocketPort: this.gateway_port,
             websocketAesKey: this.gateway_key,
             websocketUsername: this.gateway_user,
-            websocketPassword: this.gateway_pass
-          }
+            websocketPassword: this.gateway_pass,
+          };
         }
 
         this.client = new TTLockClient(clientOptions);
@@ -105,7 +111,13 @@ class Manager extends EventEmitter {
     this.client.setLockData(lockData);
   }
 
-  setNobleGateway(gateway_host, gateway_port, gateway_key, gateway_user, gateway_pass) {
+  setNobleGateway(
+    gateway_host,
+    gateway_port,
+    gateway_key,
+    gateway_user,
+    gateway_pass
+  ) {
     this.gateway = "noble";
     this.gateway_host = gateway_host;
     this.gateway_port = gateway_port;
@@ -237,7 +249,7 @@ class Manager extends EventEmitter {
     return {
       passcodes: passcodes,
       cards: cards,
-      fingers: fingers
+      fingers: fingers,
     };
   }
 
@@ -260,7 +272,14 @@ class Manager extends EventEmitter {
     return false;
   }
 
-  async updatePasscode(address, type, oldPasscode, newPasscode, startDate, endDate) {
+  async updatePasscode(
+    address,
+    type,
+    oldPasscode,
+    newPasscode,
+    startDate,
+    endDate
+  ) {
     const lock = this.pairedLocks.get(address);
     if (typeof lock != "undefined") {
       if (!lock.hasPassCode()) {
@@ -270,7 +289,13 @@ class Manager extends EventEmitter {
         return false;
       }
       try {
-        const res = await lock.updatePassCode(type, oldPasscode, newPasscode, startDate, endDate);
+        const res = await lock.updatePassCode(
+          type,
+          oldPasscode,
+          newPasscode,
+          startDate,
+          endDate
+        );
         return res;
       } catch (error) {
         console.error(error);
@@ -495,7 +520,8 @@ class Manager extends EventEmitter {
         return false;
       }
       try {
-        const sound = audio == true ? AudioManage.TURN_ON : AudioManage.TURN_OFF;
+        const sound =
+          audio == true ? AudioManage.TURN_ON : AudioManage.TURN_OFF;
         const res = await lock.setLockSound(sound);
         this.emit("lockUpdated", lock);
         return res;
@@ -516,7 +542,9 @@ class Manager extends EventEmitter {
         return false;
       }
       try {
-        let operations = JSON.parse(JSON.stringify(await lock.getOperationLog(true, reload)));
+        let operations = JSON.parse(
+          JSON.stringify(await lock.getOperationLog(true, reload))
+        );
         let validOperations = [];
         // console.log(operations);
         for (let operation of operations) {
@@ -524,9 +552,13 @@ class Manager extends EventEmitter {
             operation.recordTypeName = LogOperateNames[operation.recordType];
             if (LogOperateCategory.LOCK.includes(operation.recordType)) {
               operation.recordTypeCategory = "LOCK";
-            } else if (LogOperateCategory.UNLOCK.includes(operation.recordType)) {
+            } else if (
+              LogOperateCategory.UNLOCK.includes(operation.recordType)
+            ) {
               operation.recordTypeCategory = "UNLOCK";
-            } else if (LogOperateCategory.FAILED.includes(operation.recordType)) {
+            } else if (
+              LogOperateCategory.FAILED.includes(operation.recordType)
+            ) {
               operation.recordTypeCategory = "FAILED";
             } else {
               operation.recordTypeCategory = "OTHER";
@@ -535,7 +567,9 @@ class Manager extends EventEmitter {
               if (LogOperateCategory.IC.includes(operation.recordType)) {
                 operation.passwordName = store.getCardAlias(operation.password);
               } else if (LogOperateCategory.FR.includes(operation.recordType)) {
-                operation.passwordName = store.getFingerAlias(operation.password);
+                operation.passwordName = store.getFingerAlias(
+                  operation.password
+                );
               }
             }
             validOperations.push(operation);
@@ -572,9 +606,9 @@ class Manager extends EventEmitter {
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
-   * @param {boolean} readData 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
+   * @param {boolean} readData
    */
   async _connectLock(lock, readData = true) {
     if (this.scanning) return false;
@@ -610,7 +644,7 @@ class Manager extends EventEmitter {
         console.log("Auto connect to", address);
         const result = await lock.connect();
         if (result === true) {
-          await lock.disconnect();
+          // await lock.disconnect();
           console.log("Successful connect attempt to paired lock", address);
           this.connectQueue.delete(address);
         } else {
@@ -626,8 +660,8 @@ class Manager extends EventEmitter {
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onFoundLock(lock) {
     let listChanged = false;
@@ -640,13 +674,19 @@ class Manager extends EventEmitter {
         if (this.client.isMonitoring()) {
           const result = await lock.connect();
           if (result == true) {
-            console.log("Successful connect attempt to paired lock", lock.getAddress());
+            console.log(
+              "Successful connect attempt to paired lock",
+              lock.getAddress()
+            );
             await this._processOperationLog(lock);
           } else {
-            console.log("Unsuccessful connect attempt to paired lock", lock.getAddress());
+            console.log(
+              "Unsuccessful connect attempt to paired lock",
+              lock.getAddress()
+            );
             this.connectQueue.add(lock.getAddress());
           }
-          await lock.disconnect();
+          // await lock.disconnect();
         } else {
           // add it to the connect queue
           this.connectQueue.add(lock.getAddress());
@@ -680,8 +720,8 @@ class Manager extends EventEmitter {
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   _bindLockEvents(lock) {
     lock.on("connected", this._onLockConnected.bind(this));
@@ -695,8 +735,8 @@ class Manager extends EventEmitter {
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockConnected(lock) {
     if (lock.isPaired()) {
@@ -709,33 +749,51 @@ class Manager extends EventEmitter {
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockDisconnected(lock) {
     console.log("Disconnected from lock " + lock.getAddress());
+    const reconnectToLock = async () => {
+      const result = await lock.connect();
+      if (result == true) {
+        console.log(
+          "Successful connect attempt to paired lock",
+          lock.getAddress()
+        );
+        await this._processOperationLog(lock);
+      } else {
+        console.log(
+          "Unsuccessful connect attempt to paired lock",
+          lock.getAddress()
+        );
+        setTimeout(reconnectToLock, 1000);
+      }
+    };
+
+    setTimeout(reconnectToLock, 1000);
     this.client.startMonitor();
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockLocked(lock) {
     this.emit("lockLock", lock);
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockUnlocked(lock) {
     this.emit("lockUnlock", lock);
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockUpdated(lock, paramsChanged) {
     console.log("lockUpdated", paramsChanged);
@@ -758,7 +816,7 @@ class Manager extends EventEmitter {
       this.emit("lockUpdated", lock);
     }
 
-    await lock.disconnect();
+    // await lock.disconnect();
   }
 
   async _processOperationLog(lock) {
