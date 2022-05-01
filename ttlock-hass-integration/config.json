@@ -1,9 +1,9 @@
 {
   "name": "TTLock",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "slug": "ttlock-hass-integration",
   "description": "Integration of the offline TTLock SDK into Home Assistant",
-  "url": "https://github.com/kind3r/hass-addons",
+  "url": "https://github.com/z-jack/ttlock-hass-addons",
   "panel_icon": "mdi:key-wireless",
   "startup": "application",
   "boot": "auto",
