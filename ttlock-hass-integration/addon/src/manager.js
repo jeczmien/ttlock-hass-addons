@@ -682,7 +682,7 @@ class Manager extends EventEmitter {
               const refreshOperationLog = async ()=>{
                 await this._processOperationLog(lock);
                 if(lock.isConnected()){
-                  setTimeout(refreshOperationLog, 500)
+                  setTimeout(refreshOperationLog, 50)
                 }
               }
               refreshOperationLog()
@@ -775,7 +775,7 @@ class Manager extends EventEmitter {
           const refreshOperationLog = async ()=>{
             await this._processOperationLog(lock);
             if(lock.isConnected()){
-              setTimeout(refreshOperationLog, 500)
+              setTimeout(refreshOperationLog, 50)
             }
           }
           refreshOperationLog()
@@ -827,7 +827,7 @@ class Manager extends EventEmitter {
         const refreshOperationLog = async ()=>{
           await this._processOperationLog(lock);
           if(lock.isConnected()){
-            setTimeout(refreshOperationLog, 500)
+            setTimeout(refreshOperationLog, 50)
           }
         }
         refreshOperationLog()
