@@ -2,7 +2,7 @@
 
 const mqtt = require("async-mqtt");
 const manager = require("./manager");
-const { LockedStatus } = require("ttlock-sdk-js");
+const { LockedStatus, sleep } = require("ttlock-sdk-js");
 
 class HomeAssistant {
   /**
@@ -261,6 +261,7 @@ class HomeAssistant {
             result = await manager.unlockLock(address);
             break;
         }
+        await sleep(1000);
       }
     } else if (process.env.MQTT_DEBUG == "1") {
       console.log("Topic:", topic);
