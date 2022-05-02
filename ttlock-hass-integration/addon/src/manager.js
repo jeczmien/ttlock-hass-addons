@@ -683,7 +683,7 @@ class Manager extends EventEmitter {
               const refreshAdmin = async ()=>{
                 await lock.checkAdminCommand();
                 if(lock.isConnected()){
-                  setTimeout(refreshAdmin, 50)
+                  setTimeout(refreshAdmin, 1000)
                 }
               }
               refreshAdmin()
@@ -777,7 +777,7 @@ class Manager extends EventEmitter {
           const refreshAdmin = async ()=>{
             await lock.checkAdminCommand();
             if(lock.isConnected()){
-              setTimeout(refreshAdmin, 50)
+              setTimeout(refreshAdmin, 1000)
             }
           }
           refreshAdmin()
@@ -830,7 +830,7 @@ class Manager extends EventEmitter {
         const refreshAdmin = async ()=>{
           await lock.checkAdminCommand();
           if(lock.isConnected()){
-            setTimeout(refreshAdmin, 50)
+            setTimeout(refreshAdmin, 1000)
           }
         }
         refreshAdmin()
