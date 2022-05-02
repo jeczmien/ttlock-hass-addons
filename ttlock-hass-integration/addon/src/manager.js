@@ -678,7 +678,17 @@ class Manager extends EventEmitter {
               "Successful connect attempt to paired lock",
               lock.getAddress()
             );
-            await this._processOperationLog(lock);
+            try{
+              const refreshOperationLog = async ()=>{
+                await this._processOperationLog(lock);
+                if(lock.isConnected()){
+                  setTimeout(refreshOperationLog, 500)
+                }
+              }
+              refreshOperationLog()
+            }catch{
+              // ignore
+            }
           } else {
             console.log(
               "Unsuccessful connect attempt to paired lock",
@@ -761,7 +771,17 @@ class Manager extends EventEmitter {
           "Successful connect attempt to paired lock",
           lock.getAddress()
         );
-        await this._processOperationLog(lock);
+        try{
+          const refreshOperationLog = async ()=>{
+            await this._processOperationLog(lock);
+            if(lock.isConnected()){
+              setTimeout(refreshOperationLog, 500)
+            }
+          }
+          refreshOperationLog()
+        }catch{
+          // ignore
+        }
       } else {
         console.log(
           "Unsuccessful connect attempt to paired lock",
@@ -803,7 +823,17 @@ class Manager extends EventEmitter {
         const result = await lock.connect();
         // TODO: handle failed connection
       }
-      await this._processOperationLog(lock);
+      try{
+        const refreshOperationLog = async ()=>{
+          await this._processOperationLog(lock);
+          if(lock.isConnected()){
+            setTimeout(refreshOperationLog, 500)
+          }
+        }
+        refreshOperationLog()
+      }catch{
+        // ignore
+      }
     }
     if (paramsChanged.lockedStatus == true) {
       const status = await lock.getLockStatus();
