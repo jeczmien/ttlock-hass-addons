@@ -1,5 +1,5 @@
 diff --git a/node_modules/ttlock-sdk-js/dist/scanner/noble/NobleScanner.js b/node_modules/ttlock-sdk-js/dist/scanner/noble/NobleScanner.js
-index 19e9f3c..8c74d46 100644
+index 19e9f3c..813a186 100644
 --- a/node_modules/ttlock-sdk-js/dist/scanner/noble/NobleScanner.js
 +++ b/node_modules/ttlock-sdk-js/dist/scanner/noble/NobleScanner.js
 @@ -53,11 +53,12 @@ class NobleScanner extends events_1.EventEmitter {
@@ -16,13 +16,21 @@ index 19e9f3c..8c74d46 100644
          }
          catch (error) {
              console.error(error);
-@@ -69,11 +70,12 @@ class NobleScanner extends events_1.EventEmitter {
+@@ -69,11 +70,19 @@ class NobleScanner extends events_1.EventEmitter {
      }
      async stopNobleScan() {
          try {
 -            if (typeof this.noble != "undefined") {
+-                await this.noble.stopScanningAsync();
 +            if (typeof this.noble != "undefined" && this.scannerState != "stopped") {
-                 await this.noble.stopScanningAsync();
++                await new Promise((res,rej)=>{
++                    let cbk = res
++                    this.noble.stopScanningAsync().then(()=>cbk&&cbk(true));
++                    setTimeout(()=>{
++                        cbk=null
++                        res(false)
++                    }, 1000)
++                }) 
                  this.scannerState = "stopped";
                  return true;
              }
