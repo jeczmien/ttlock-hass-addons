@@ -678,7 +678,7 @@ class Manager extends EventEmitter {
               "Successful connect attempt to paired lock",
               lock.getAddress()
             );
-            this._processOperationLog(lock)
+            await this._processOperationLog(lock)
             try{
               const refreshAdmin = async ()=>{
                 await lock.checkAdminCommand();
@@ -772,7 +772,7 @@ class Manager extends EventEmitter {
           "Successful connect attempt to paired lock",
           lock.getAddress()
         );
-        this._processOperationLog(lock)
+        await this._processOperationLog(lock)
         try{
           const refreshAdmin = async ()=>{
             await lock.checkAdminCommand();
@@ -825,7 +825,7 @@ class Manager extends EventEmitter {
         const result = await lock.connect();
         // TODO: handle failed connection
       }
-      this._processOperationLog(lock)
+      await this._processOperationLog(lock)
       try{
         const refreshAdmin = async ()=>{
           await lock.checkAdminCommand();
