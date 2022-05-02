@@ -1,18 +1,18 @@
-'use stricet';
+"use strict";
 
-const mqtt = require('async-mqtt');
-const manager = require('./manager');
-const { LockedStatus } = require('ttlock-sdk-js');
+const mqtt = require("async-mqtt");
+const manager = require("./manager");
+const { LockedStatus } = require("ttlock-sdk-js");
 
 class HomeAssistant {
   /**
-   * 
-   * @param {import('./manager')} manager 
+   *
+   * @param {import('./manager')} manager
    * @param {Object} options
-   * @param {string} options.mqttUrl 
-   * @param {string} options.mqttUser 
-   * @param {string} options.mqttPass 
-   * @param {string} options.discovery_prefix 
+   * @param {string} options.mqttUrl
+   * @param {string} options.mqttUser
+   * @param {string} options.mqttPass
+   * @param {string} options.discovery_prefix
    */
   constructor(options) {
     this.mqttUrl = options.mqttUrl;
@@ -34,7 +34,7 @@ class HomeAssistant {
     if (!this.connected) {
       this.client = await mqtt.connectAsync(this.mqttUrl, {
         username: this.mqttUser,
-        password: this.mqttPass
+        password: this.mqttPass,
       });
       this.client.on("message", this._onMQTTMessage.bind(this));
       await this.client.subscribe("ttlock/+/set");
@@ -45,7 +45,7 @@ class HomeAssistant {
 
   /**
    * Construct a unique ID for a lock, based on the MAC address
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   getLockId(lock) {
     const address = lock.getAddress();
@@ -54,7 +54,7 @@ class HomeAssistant {
 
   /**
    * Configure a lock device in HA
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async configureLock(lock) {
     if (this.connected && !this.configuredLocks.has(lock.getAddress())) {
@@ -62,17 +62,16 @@ class HomeAssistant {
       const id = this.getLockId(lock);
       const name = lock.getName();
       const device = {
-        identifiers: [
-          "ttlock_" + id
-        ],
-        "name": name,
-        "manufacturer": lock.getManufacturer(),
-        "model": lock.getModel(),
-        "sw_version": lock.getFirmware()
+        identifiers: ["ttlock_" + id],
+        name: name,
+        manufacturer: lock.getManufacturer(),
+        model: lock.getModel(),
+        sw_version: lock.getFirmware(),
       };
 
       // setup lock state
-      const configLockTopic = this.discovery_prefix + "/lock/" + id + "/lock/config";
+      const configLockTopic =
+        this.discovery_prefix + "/lock/" + id + "/lock/config";
       const lockPayload = {
         unique_id: "ttlock_" + id,
         name: name,
@@ -85,15 +84,24 @@ class HomeAssistant {
         state_unlocked: "UNLOCK",
         value_template: "{{ value_json.state }}",
         optimistic: false,
-        retain: false
-      }
+        retain: false,
+      };
       if (process.env.MQTT_DEBUG == "1") {
-        console.log("MQTT Publish", configLockTopic, JSON.stringify(lockPayload));
+        console.log(
+          "MQTT Publish",
+          configLockTopic,
+          JSON.stringify(lockPayload)
+        );
       }
-      let res = await this.client.publish(configLockTopic, JSON.stringify(lockPayload), { retain: true });
+      let res = await this.client.publish(
+        configLockTopic,
+        JSON.stringify(lockPayload),
+        { retain: true }
+      );
 
       // setup battery sensor
-      const configBatteryTopic = this.discovery_prefix + "/sensor/" + id + "/battery/config";
+      const configBatteryTopic =
+        this.discovery_prefix + "/sensor/" + id + "/battery/config";
       const batteryPayload = {
         unique_id: "ttlock_" + id + "_battery",
         name: name + " Battery",
@@ -102,14 +110,23 @@ class HomeAssistant {
         unit_of_measurement: "%",
         state_topic: "ttlock/" + id,
         value_template: "{{ value_json.battery }}",
-      }
+      };
       if (process.env.MQTT_DEBUG == "1") {
-        console.log("MQTT Publish", configBatteryTopic, JSON.stringify(batteryPayload));
+        console.log(
+          "MQTT Publish",
+          configBatteryTopic,
+          JSON.stringify(batteryPayload)
+        );
       }
-      res = await this.client.publish(configBatteryTopic, JSON.stringify(batteryPayload), { retain: true });
+      res = await this.client.publish(
+        configBatteryTopic,
+        JSON.stringify(batteryPayload),
+        { retain: true }
+      );
 
       // setup rssi sensor
-      const configRssiTopic = this.discovery_prefix + "/sensor/" + id + "/rssi/config";
+      const configRssiTopic =
+        this.discovery_prefix + "/sensor/" + id + "/rssi/config";
       const rssiPayload = {
         unique_id: "ttlock_" + id + "_rssi",
         name: name + " RSSI",
@@ -118,11 +135,19 @@ class HomeAssistant {
         icon: "mdi:signal",
         state_topic: "ttlock/" + id,
         value_template: "{{ value_json.rssi }}",
-      }
+      };
       if (process.env.MQTT_DEBUG == "1") {
-        console.log("MQTT Publish", configRssiTopic, JSON.stringify(rssiPayload));
+        console.log(
+          "MQTT Publish",
+          configRssiTopic,
+          JSON.stringify(rssiPayload)
+        );
       }
-      res = await this.client.publish(configRssiTopic, JSON.stringify(rssiPayload), { retain: true });
+      res = await this.client.publish(
+        configRssiTopic,
+        JSON.stringify(rssiPayload),
+        { retain: true }
+      );
 
       this.configuredLocks.add(lock.getAddress());
     }
@@ -130,7 +155,7 @@ class HomeAssistant {
 
   /**
    * Update the readings of a lock in HA
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async updateLockState(lock) {
     if (this.connected) {
@@ -140,29 +165,34 @@ class HomeAssistant {
       let statePayload = {
         battery: lock.getBattery(),
         rssi: lock.getRssi(),
-      }
+      };
       if (lockedStatus != LockedStatus.UNKNOWN) {
-        statePayload.state = lockedStatus == LockedStatus.LOCKED ? "LOCK" : "UNLOCK";
+        statePayload.state =
+          lockedStatus == LockedStatus.LOCKED ? "LOCK" : "UNLOCK";
       }
 
       if (process.env.MQTT_DEBUG == "1") {
         console.log("MQTT Publish", stateTopic, JSON.stringify(statePayload));
       }
-      const res = await this.client.publish(stateTopic, JSON.stringify(statePayload), { retain: true });
+      const res = await this.client.publish(
+        stateTopic,
+        JSON.stringify(statePayload),
+        { retain: true }
+      );
     }
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockPaired(lock) {
     await this.configureLock(lock);
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockConnected(lock) {
     await this.configureLock(lock);
@@ -170,40 +200,45 @@ class HomeAssistant {
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockUnlock(lock) {
     await this.updateLockState(lock);
   }
 
   /**
-   * 
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   *
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockLock(lock) {
     await this.updateLockState(lock);
   }
 
   /**
-   * @param {import('ttlock-sdk-js').TTLock} lock 
+   * @param {import('ttlock-sdk-js').TTLock} lock
    */
   async _onLockBatteryUpdated(lock) {
     await this.updateLockState(lock);
   }
 
   /**
-   * 
-   * @param {string} topic 
-   * @param {Buffer} message 
+   *
+   * @param {string} topic
+   * @param {Buffer} message
    */
-  _onMQTTMessage(topic, message) {
+  async _onMQTTMessage(topic, message) {
     /**
      * Topic: ttlock/e1581b3a605e/set
        Message: UNLOCK
      */
     let topicArr = topic.split("/");
-    if (topicArr.length == 3 && topicArr[0] == "ttlock" && topicArr[2] == "set" && topicArr[1].length == 12) {
+    if (
+      topicArr.length == 3 &&
+      topicArr[0] == "ttlock" &&
+      topicArr[2] == "set" &&
+      topicArr[1].length == 12
+    ) {
       let address = "";
       for (let i = 0; i < topicArr[1].length; i++) {
         address += topicArr[1][i];
@@ -212,21 +247,24 @@ class HomeAssistant {
         }
       }
       address = address.toUpperCase();
-      const command = message.toString('utf8');
+      const command = message.toString("utf8");
       if (process.env.MQTT_DEBUG == "1") {
         console.log("MQTT command:", address, command);
       }
-      switch (command) {
-        case "LOCK":
-          manager.lockLock(address);
-          break;
-        case "UNLOCK":
-          manager.unlockLock(address);
-          break;
+      let result = false;
+      while (!result) {
+        switch (command) {
+          case "LOCK":
+            result = await manager.lockLock(address);
+            break;
+          case "UNLOCK":
+            result = await manager.unlockLock(address);
+            break;
+        }
       }
     } else if (process.env.MQTT_DEBUG == "1") {
       console.log("Topic:", topic);
-      console.log("Message:", message.toString('utf8'));
+      console.log("Message:", message.toString("utf8"));
     }
   }
 }
