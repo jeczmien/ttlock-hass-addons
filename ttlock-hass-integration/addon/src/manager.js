@@ -678,14 +678,15 @@ class Manager extends EventEmitter {
               "Successful connect attempt to paired lock",
               lock.getAddress()
             );
+            this._processOperationLog(lock)
             try{
-              const refreshOperationLog = async ()=>{
-                await this._processOperationLog(lock);
+              const refreshAdmin = async ()=>{
+                await lock.checkAdminCommand();
                 if(lock.isConnected()){
-                  setTimeout(refreshOperationLog, 50)
+                  setTimeout(refreshAdmin, 50)
                 }
               }
-              refreshOperationLog()
+              refreshAdmin()
             }catch{
               // ignore
             }
@@ -771,14 +772,15 @@ class Manager extends EventEmitter {
           "Successful connect attempt to paired lock",
           lock.getAddress()
         );
+        this._processOperationLog(lock)
         try{
-          const refreshOperationLog = async ()=>{
-            await this._processOperationLog(lock);
+          const refreshAdmin = async ()=>{
+            await lock.checkAdminCommand();
             if(lock.isConnected()){
-              setTimeout(refreshOperationLog, 50)
+              setTimeout(refreshAdmin, 50)
             }
           }
-          refreshOperationLog()
+          refreshAdmin()
         }catch{
           // ignore
         }
@@ -823,14 +825,15 @@ class Manager extends EventEmitter {
         const result = await lock.connect();
         // TODO: handle failed connection
       }
+      this._processOperationLog(lock)
       try{
-        const refreshOperationLog = async ()=>{
-          await this._processOperationLog(lock);
+        const refreshAdmin = async ()=>{
+          await lock.checkAdminCommand();
           if(lock.isConnected()){
-            setTimeout(refreshOperationLog, 50)
+            setTimeout(refreshAdmin, 50)
           }
         }
-        refreshOperationLog()
+        refreshAdmin()
       }catch{
         // ignore
       }
