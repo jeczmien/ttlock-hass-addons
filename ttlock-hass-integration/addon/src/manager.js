@@ -678,16 +678,17 @@ class Manager extends EventEmitter {
               "Successful connect attempt to paired lock",
               lock.getAddress()
             );
-            await this._processOperationLog(lock)
-            try{
-              const refreshAdmin = async ()=>{
+            await this._processOperationLog(lock);
+            try {
+              const refreshAdmin = async () => {
                 await lock.checkAdminCommand();
-                if(lock.isConnected()){
-                  setTimeout(refreshAdmin, 1000)
+                await this._processOperationLog(lock);
+                if (lock.isConnected()) {
+                  setTimeout(refreshAdmin, 1000);
                 }
-              }
-              refreshAdmin()
-            }catch{
+              };
+              refreshAdmin();
+            } catch {
               // ignore
             }
           } else {
@@ -772,16 +773,17 @@ class Manager extends EventEmitter {
           "Successful connect attempt to paired lock",
           lock.getAddress()
         );
-        await this._processOperationLog(lock)
-        try{
-          const refreshAdmin = async ()=>{
+        await this._processOperationLog(lock);
+        try {
+          const refreshAdmin = async () => {
             await lock.checkAdminCommand();
-            if(lock.isConnected()){
-              setTimeout(refreshAdmin, 1000)
+            await this._processOperationLog(lock);
+            if (lock.isConnected()) {
+              setTimeout(refreshAdmin, 1000);
             }
-          }
-          refreshAdmin()
-        }catch{
+          };
+          refreshAdmin();
+        } catch {
           // ignore
         }
       } else {
@@ -825,16 +827,17 @@ class Manager extends EventEmitter {
         const result = await lock.connect();
         // TODO: handle failed connection
       }
-      await this._processOperationLog(lock)
-      try{
-        const refreshAdmin = async ()=>{
+      await this._processOperationLog(lock);
+      try {
+        const refreshAdmin = async () => {
           await lock.checkAdminCommand();
-          if(lock.isConnected()){
-            setTimeout(refreshAdmin, 1000)
+          await this._processOperationLog(lock);
+          if (lock.isConnected()) {
+            setTimeout(refreshAdmin, 1000);
           }
-        }
-        refreshAdmin()
-      }catch{
+        };
+        refreshAdmin();
+      } catch {
         // ignore
       }
     }

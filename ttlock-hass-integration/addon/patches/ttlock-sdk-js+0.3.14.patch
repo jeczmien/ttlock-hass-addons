@@ -1,3 +1,16 @@
+diff --git a/node_modules/ttlock-sdk-js/dist/device/TTBluetoothDevice.js b/node_modules/ttlock-sdk-js/dist/device/TTBluetoothDevice.js
+index 0beefba..d3fe730 100644
+--- a/node_modules/ttlock-sdk-js/dist/device/TTBluetoothDevice.js
++++ b/node_modules/ttlock-sdk-js/dist/device/TTBluetoothDevice.js
+@@ -182,7 +182,7 @@ class TTBluetoothDevice extends TTDevice_1.TTDevice {
+                             // wait for a response
+                             // console.log("Waiting for response");
+                             let cycles = 0;
+-                            while (this.responses.length == 0 && this.connected) {
++                            while (this.responses.length == 0 && this.connected && cycles * 5 < 50000) {
+                                 cycles++;
+                                 await timingUtil_1.sleep(5);
+                             }
 diff --git a/node_modules/ttlock-sdk-js/dist/scanner/noble/NobleScanner.js b/node_modules/ttlock-sdk-js/dist/scanner/noble/NobleScanner.js
 index 19e9f3c..813a186 100644
 --- a/node_modules/ttlock-sdk-js/dist/scanner/noble/NobleScanner.js
