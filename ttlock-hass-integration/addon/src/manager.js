@@ -649,6 +649,35 @@ class Manager extends EventEmitter {
           this.connectQueue.delete(address);
         } else {
           console.log("Unsuccessful connect attempt to paired lock", address);
+          const reconnectToLock = async () => {
+            const result = await lock.connect();
+            if (result == true) {
+              console.log(
+                "Successful connect attempt to paired lock",
+                lock.getAddress()
+              );
+              await this._processOperationLog(lock);
+              try {
+                const refreshAdmin = async () => {
+                  await lock.checkAdminCommand();
+                  await this._processOperationLog(lock);
+                  if (lock.isConnected()) {
+                    setTimeout(refreshAdmin, 1000);
+                  }
+                };
+                refreshAdmin();
+              } catch {
+                // ignore
+              }
+            } else {
+              console.log(
+                "Unsuccessful connect attempt to paired lock",
+                lock.getAddress()
+              );
+              setTimeout(reconnectToLock, 1000);
+            }
+          };
+          setTimeout(reconnectToLock, 1000);
         }
       }
     }
@@ -696,7 +725,35 @@ class Manager extends EventEmitter {
               "Unsuccessful connect attempt to paired lock",
               lock.getAddress()
             );
-            this.connectQueue.add(lock.getAddress());
+            const reconnectToLock = async () => {
+              const result = await lock.connect();
+              if (result == true) {
+                console.log(
+                  "Successful connect attempt to paired lock",
+                  lock.getAddress()
+                );
+                await this._processOperationLog(lock);
+                try {
+                  const refreshAdmin = async () => {
+                    await lock.checkAdminCommand();
+                    await this._processOperationLog(lock);
+                    if (lock.isConnected()) {
+                      setTimeout(refreshAdmin, 1000);
+                    }
+                  };
+                  refreshAdmin();
+                } catch {
+                  // ignore
+                }
+              } else {
+                console.log(
+                  "Unsuccessful connect attempt to paired lock",
+                  lock.getAddress()
+                );
+                setTimeout(reconnectToLock, 1000);
+              }
+            };
+            setTimeout(reconnectToLock, 1000);
           }
           // await lock.disconnect();
         } else {
