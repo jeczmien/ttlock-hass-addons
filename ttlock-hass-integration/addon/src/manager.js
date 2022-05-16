@@ -645,6 +645,11 @@ class Manager extends EventEmitter {
         const result = await lock.connect();
         if (result === true) {
           // await lock.disconnect();
+          setTimeout(async () => {
+            if (lock.isConnected()) {
+              await lock.disconnect();
+            }
+          }, 1000 * 60 * 30);
           console.log("Successful connect attempt to paired lock", address);
           this.connectQueue.delete(address);
         } else {
@@ -756,6 +761,11 @@ class Manager extends EventEmitter {
             setTimeout(reconnectToLock, 1000);
           }
           // await lock.disconnect();
+          setTimeout(async () => {
+            if (lock.isConnected()) {
+              await lock.disconnect();
+            }
+          }, 1000 * 60 * 30);
         } else {
           // add it to the connect queue
           this.connectQueue.add(lock.getAddress());
