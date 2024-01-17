@@ -22,7 +22,7 @@
     "unofficial",
     "offline"
   ],
-  "author": "JackZ <404@jackz.cn>",
+  "author": "Sdahl <404@sdahl.dk>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/Sdahl1234/ttlock-hass-addons/issues"
@@ -31,7 +31,7 @@
   "dependencies": {
     "async-mqtt": "^2.6.1",
     "express": "^4.17.1",
-    "ttlock-sdk-js": "https://github.com/Sdahl1234/ttlock-sdk-js.git",
+    "ttlock-sdk-js": "git+https://git@github.com/Sdahl1234/ttlock-sdk-js.git",
     "ws": "^7.4.2"
   },
   "devDependencies": {
