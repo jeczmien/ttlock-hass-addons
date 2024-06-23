@@ -1,6 +1,6 @@
 # Home Assistant Add-on TTLock
 
-> This is a **WORK IN PROGRESS**. Help with testing and report bugs [here](https://github.com/Sdahl1234/ttlock-hass-addons/issues).
+> This is a **WORK IN PROGRESS**. Help with testing and report bugs [here](https://github.com/jeczmien/ttlock-hass-addons/issues).
 
 ## Requirements
 - Bluetooth adapter compatible with [@abandonware/noble](https://github.com/abandonware/noble)
@@ -18,7 +18,7 @@
   - Add / remove fingerprints
   - View operations log
   - Get updates about lock / unlock status
-- (optional) HA reporting and controling via `lock` domain device using MQTT discovery
+- (optional) HA reporting and controlling via `lock` domain device using MQTT discovery
   - Signal level
   - Battery level
   - Lock/unlock status
@@ -26,14 +26,14 @@
 ## Screenshots
 
 ### Lock list  
-![Lock list](https://raw.githubusercontent.com/Sdahl1234/ttlock-hass-addons/master/ttlock-hass-integration/img/frontend1.png)  
+![Lock list](https://raw.githubusercontent.com/jeczmien/ttlock-hass-addons/master/ttlock-hass-integration/img/frontend1.png)  
 
 ### Credentials  
-![Credentials](https://raw.githubusercontent.com/Sdahl1234/ttlock-hass-addons/master/ttlock-hass-integration/img/frontend2.png)  
+![Credentials](https://raw.githubusercontent.com/jeczmien/ttlock-hass-addons/master/ttlock-hass-integration/img/frontend2.png)  
 
 ### Add fingerprint  
-![Add fingerprint](https://raw.githubusercontent.com/Sdahl1234/ttlock-hass-addons/master/ttlock-hass-integration/img/frontend3.png)  
+![Add fingerprint](https://raw.githubusercontent.com/jeczmien/ttlock-hass-addons/master/ttlock-hass-integration/img/frontend3.png)  
 
 ### HA device
-![HA device](https://raw.githubusercontent.com/Sdahl1234/ttlock-hass-addons/master/ttlock-hass-integration/img/ha1.png)  
+![HA device](https://raw.githubusercontent.com/jeczmien/ttlock-hass-addons/master/ttlock-hass-integration/img/ha1.png)  
 
